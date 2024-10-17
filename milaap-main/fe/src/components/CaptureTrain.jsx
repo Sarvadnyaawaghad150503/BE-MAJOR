@@ -8,37 +8,36 @@ import {
   useToast,
   IconButton,
   Spinner,
+  Box,
+  Heading,
+  VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 
 const CaptureTrainPage = () => {
-  const [loading, setLoading] = useState(false); // State to track loading state
-  const toast = useToast(); // To use Chakra UI toast
-  const navigate = useNavigate(); // To use navigate for redirection
+  const [loading, setLoading] = useState(false);
+  const toast = useToast();
+  const navigate = useNavigate();
 
   const handleCaptureDataset = () => {
-    setLoading(true); // Set loading state to true when capturing dataset starts
-
+    setLoading(true);
     axios
       .post("http://localhost:5000/capture-dataset")
       .then((response) => {
         console.log(response.data.message);
-        // Show toast notification
         toast({
           title: "Capture Success",
           description: "Images captured successfully.",
           status: "success",
-          duration: 3000, // Display duration
-          isClosable: true, // Allow user to close the toast manually
+          duration: 3000,
+          isClosable: true,
         });
-        // Scroll to the bottom of the page
         window.scrollTo(0, document.body.scrollHeight);
       })
       .catch((error) => {
         console.error("Error capturing dataset:", error);
-        // Show toast notification for error
         toast({
           title: "Capture Error",
           description: "An error occurred while capturing images.",
@@ -47,32 +46,28 @@ const CaptureTrainPage = () => {
         });
       })
       .finally(() => {
-        setLoading(false); // Set loading state to false when capturing dataset completes (whether successful or failed)
+        setLoading(false);
       });
   };
 
   const handleTrainModel = () => {
-    setLoading(true); // Set loading state to true when training model starts
-
+    setLoading(true);
     axios
       .post("http://localhost:5000/train-model")
       .then((response) => {
         console.log(response.data.message);
-        // Show toast notification for successful train model
         toast({
           title: "Success",
           description: "Model trained successfully.",
           status: "success",
-          duration: 2000, // Set duration to 2 seconds
+          duration: 2000,
         });
-        // Redirect to face recognition page after 2 seconds
         setTimeout(() => {
           navigate("/face-recognition");
         }, 2000);
       })
       .catch((error) => {
         console.error("Error training model:", error);
-        // Show toast notification for error
         toast({
           title: "Error",
           description: "An error occurred while training the model.",
@@ -82,7 +77,7 @@ const CaptureTrainPage = () => {
         });
       })
       .finally(() => {
-        setLoading(false); // Set loading state to false when training model completes (whether successful or failed)
+        setLoading(false);
       });
   };
 
@@ -91,24 +86,22 @@ const CaptureTrainPage = () => {
   };
 
   return (
-    <>
+    <Box bg="gray.900" minHeight="200vh" color="white">
       {loading && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 9999,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center", // Center vertically
-          }}
+        <Box
+          position="fixed"
+          top={0}
+          left={0}
+          width="100vw"
+          height="100vh"
+          backgroundColor="rgba(0, 0, 0, 0.7)"
+          zIndex={9999}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
         >
-          <Spinner size="xl" color="white" speed="0.95s" thickness="6px" />
-        </div>
+          <Spinner size="xl" color="purple.300" speed="0.95s" thickness="6px" />
+        </Box>
       )}
       <IconButton
         icon={<ArrowBackIcon />}
@@ -118,126 +111,83 @@ const CaptureTrainPage = () => {
         top={6}
         left={6}
         zIndex={17}
+        colorScheme="purple"
       />
       {/* Capture section */}
-      <div style={{ width: "100%", height: "100vh" }}>
-        <Container maxW="6xl" px={{ base: 6, md: 3 }} py={19} pt="63px">
-          <Stack
-            direction={{ base: "column", md: "row" }}
+      <Container maxW="6xl" px={{ base: 6, md: 3 }} py={119} pt="163px">
+        <Stack
+          direction={{ base: "column", md: "row" }}
+          justifyContent="center"
+          alignItems="stretch"
+          spacing={8}
+        >
+          <VStack
+            spacing={6}
             justifyContent="center"
-            alignItems="stretch" // Stretch the text to match the height of the image
-            spacing={8}
+            maxW="480px"
+            alignItems="flex-start"
           >
-            <Stack
-              direction="column"
-              spacing={6}
-              justifyContent="center"
-              maxW="480px"
+            <Heading as="h2" fontSize="5xl" lineHeight={1} color="purple.300">
+              Capture
+            </Heading>
+            <Text fontSize="1.2rem" lineHeight="1.375" color="gray.300">
+              This process will capture 300 images of your face. The captured
+              images will be used to train a machine learning model to
+              recognize facial features and expressions.
+            </Text>
+            <Button
+              colorScheme="purple"
+              size="lg"
+              rounded="md"
+              onClick={handleCaptureDataset}
             >
-              <Text
-                fontSize="5xl"
-                lineHeight={1}
-                fontWeight="bold"
-                textAlign="left"
-                color="gray.700"
-              >
-                Capture
-              </Text>
-              <Text
-                fontSize="1.2rem"
-                textAlign="left"
-                lineHeight="1.375"
-                fontWeight="400"
-                color="gray.700"
-              >
-                This process will capture 300 images of your face. The captured
-                images will be used to train a machine learning model to
-                recognize facial features and expressions.
-              </Text>
-              <Button
-                w={{ base: "100%", sm: "auto" }}
-                h={12}
-                px={6}
-                color="black"
-                size="lg"
-                rounded="md"
-                mb={{ base: 2, sm: 0 }}
-                zIndex={5}
-                bg="#F0E4C7"
-                transition="background-color 0.3s, color 0.3s"
-                _hover={{ bg: "#977C64", color: "white" }}
-                onClick={handleCaptureDataset}
-              >
-                Capture Dataset
-              </Button>
-            </Stack>
-            <Image
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK038LcHXogO1Bw9VKPwY7ohtgS4Tfbcoln81Pn5fDjSwSsd8Pv04Mwj2uU22PRgXs3qQ&usqp=CAU"
-              alt="Capture Image"
-              w={{ base: "100%", md: "45%" }}
-              h="auto"
-              objectFit="cover"
-              borderRadius="md"
-            />
-          </Stack>
-        </Container>
-      </div>
+              Capture Dataset
+            </Button>
+          </VStack>
+          <Image
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK038LcHXogO1Bw9VKPwY7ohtgS4Tfbcoln81Pn5fDjSwSsd8Pv04Mwj2uU22PRgXs3qQ&usqp=CAU"
+            alt="Capture Image"
+            w={{ base: "100%", md: "45%" }}
+            h="auto"
+            objectFit="cover"
+            borderRadius="md"
+          />
+        </Stack>
+      </Container>
 
       {/* Train section */}
-      <div
-        style={{ width: "100%", height: "100vh", backgroundColor: "#F0E4C7" }}
-      >
+      <Box bg="gray.800" width="100%" minHeight="100vh">
         <Container maxW="6xl" px={{ base: 6, md: 3 }} py={19} pt="123px">
           <Stack
             direction={{ base: "column", md: "row" }}
             justifyContent="center"
-            alignItems="stretch" // Stretch the text to match the height of the image
+            alignItems="stretch"
             spacing={8}
           >
-            <Stack
-              direction="column"
+            <VStack
               spacing={6}
               justifyContent="center"
               maxW="480px"
+              alignItems="flex-start"
             >
-              <Text
-                fontSize="5xl"
-                lineHeight={1}
-                fontWeight="bold"
-                textAlign="left"
-                color="black"
-              >
+              <Heading as="h2" fontSize="5xl" lineHeight={1} color="purple.300">
                 Train Model
-              </Text>
-              <Text
-                fontSize="1.2rem"
-                textAlign="left"
-                lineHeight="1.375"
-                fontWeight="400"
-                color="black"
-              >
+              </Heading>
+              <Text fontSize="1.2rem" lineHeight="1.375" color="gray.300">
                 The training process involves using machine learning algorithms
                 to analyze and learn patterns from a dataset. This dataset
                 typically consists of labeled examples that the model uses to
                 adjust its internal parameters and improve its performance.
               </Text>
               <Button
-                w={{ base: "100%", sm: "auto" }}
-                h={12}
-                px={6}
-                color="white"
+                colorScheme="purple"
                 size="lg"
                 rounded="md"
-                mb={{ base: 2, sm: 0 }}
-                zIndex={5}
-                bg="#977C64"
-                transition="background-color 0.3s, color 0.3s"
-                _hover={{ bg: "#977C64", color: "black" }}
                 onClick={handleTrainModel}
               >
                 Train Model
               </Button>
-            </Stack>
+            </VStack>
             <Image
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTc8KdMo6ziodug34pr1U5zjceZ1i50N-M-jwtBxQAWTJBsFqsklOM-gVAFiKLBZY-1ZrM&usqp=CAU"
               alt="Train Image"
@@ -248,8 +198,8 @@ const CaptureTrainPage = () => {
             />
           </Stack>
         </Container>
-      </div>
-    </>
+      </Box>
+    </Box>
   );
 };
 

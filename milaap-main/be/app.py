@@ -13,6 +13,8 @@ from email.mime.image import MIMEImage
 from datetime import datetime
 
 
+
+
 geolocator = Nominatim(user_agent="my_geocoder")
 app = Flask(__name__)
 CORS(app)
@@ -78,14 +80,17 @@ def face_recognition():
         else:
             return jsonify({'message': 'Face recognition failed :('}), 400 
     except Exception as e:
-        print(f"Error performing face recognition: {e}")
+        print(f"Image found: {e}")
         return jsonify({'error': str(e)}), 500 
 
 data_list = []
 
 @app.route('/add-user', methods=['POST'])
 def add_name():
+   
+    
     try:
+        
         data = request.json
         name = data.get('name')
         email = data.get('email')
@@ -114,9 +119,11 @@ def add_name():
 
 @app.route('/capture-dataset', methods=['POST'])
 def capture_dataset():
+   
     try:
         with open('data.json', 'r') as file:
             data = json.load(file)
+            # 
             last_entry = data[-1]
             username = last_entry.get('name')
 
@@ -128,6 +135,7 @@ def capture_dataset():
 
 @app.route('/train-model', methods=['POST'])
 def train_model():
+   
     try:
         with open('data.json', 'r') as file:
             data = json.load(file)

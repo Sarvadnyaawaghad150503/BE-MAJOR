@@ -92,6 +92,9 @@ body {
 .start-heading {
   text-align: center;
 }
+.ans{
+  background-color: black ;
+}
 
 .start-button {
   display: block;

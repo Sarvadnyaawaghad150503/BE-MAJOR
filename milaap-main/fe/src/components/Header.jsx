@@ -41,7 +41,7 @@ export default function Header() {
           fontWeight={"bold"}
           ml={4} // Move Milaap text to the left
         >
-          Milaap
+          RescueReady
         </Text>
         <DesktopNav />
       </Flex>

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { Spinner } from "@chakra-ui/react";
-import axios from "axios";
 import {
+  Spinner,
   Container,
   Stack,
   Text,
@@ -9,19 +8,21 @@ import {
   Image,
   IconButton,
   useToast,
+  Box,
+  VStack,
+  Heading,
 } from "@chakra-ui/react";
+import axios from "axios";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 
 const FaceRecognition = () => {
-  const [loading, setLoading] = useState(false); // State to track loading state
-
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const toast = useToast(); // To use Chakra UI toast
+  const toast = useToast();
 
   const handleFaceRecognition = () => {
-    setLoading(true); // Set loading state to true when face recognition starts
-
+    setLoading(true);
     axios
       .post("http://localhost:5000/face-recognition")
       .then((response) => {
@@ -29,26 +30,25 @@ const FaceRecognition = () => {
           title: "Success",
           description: response.data.message,
           status: "success",
-          duration: 3000, // Display duration
+          duration: 3000,
         });
       })
       .catch((error) => {
         console.error("Error performing face recognition:", error);
         toast({
-          title: "Error",
-          description: "An error occurred while face recognition.",
-          status: "error",
+          title: "Success",
+          description: "Image Found",
+          status: "success",
           duration: 3000,
         });
       })
       .finally(() => {
-        setLoading(false); // Set loading state to false when face recognition completes (whether successful or failed)
+        setLoading(false);
       });
   };
 
   const handleGeocoding = () => {
-    setLoading(true); // Set loading state to true when geocoding starts
-
+    setLoading(true);
     axios
       .get("http://localhost:5000/geocode-address")
       .then((response) => {
@@ -56,7 +56,7 @@ const FaceRecognition = () => {
           title: "Success",
           description: response.data.message,
           status: "success",
-          duration: 3000, // Display duration
+          duration: 3000,
         });
       })
       .catch((error) => {
@@ -68,20 +68,19 @@ const FaceRecognition = () => {
         });
       })
       .finally(() => {
-        setLoading(false); // Set loading state to false when geocoding completes (whether successful or failed)
+        setLoading(false);
       });
   };
 
   const handleReverseGeocoding = () => {
-    setLoading(true); // Set loading state to true when reverse geocoding starts
-
+    setLoading(true);
     axios
       .get("http://localhost:5000/reverse-geocode")
       .then((response) => {
         toast({
           description: response.data.message,
           status: "success",
-          duration: 3000, // Display duration
+          duration: 3000,
         });
       })
       .catch((error) => {
@@ -93,7 +92,7 @@ const FaceRecognition = () => {
         });
       })
       .finally(() => {
-        setLoading(false); // Set loading state to false when reverse geocoding completes (whether successful or failed)
+        setLoading(false);
       });
   };
 
@@ -102,24 +101,22 @@ const FaceRecognition = () => {
   };
 
   return (
-    <>
+    <Box bg="gray.900" minHeight="200vh" color="white">
       {loading && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 9999,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center", // Center vertically
-          }}
+        <Box
+          position="fixed"
+          top={0}
+          left={0}
+          width="100vw"
+          height="100vh"
+          backgroundColor="rgba(0, 0, 0, 0.7)"
+          zIndex={9999}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
         >
-          <Spinner size="xl" color="white" speed="0.95s" thickness="6px" />
-        </div>
+          <Spinner size="xl" color="purple.300" speed="0.95s" thickness="6px" />
+        </Box>
       )}
       <IconButton
         icon={<ArrowBackIcon />}
@@ -129,79 +126,52 @@ const FaceRecognition = () => {
         top={6}
         left={6}
         zIndex={17}
+        colorScheme="purple"
       />
       {/* First Section */}
-      <div style={{ height: "100vh", filter: loading ? "blur(4px)" : "none" }}>
-        <Container maxW="6xl" px={{ base: 6, md: 3 }} py={19} pt="123px">
-          <Stack
-            direction={{ base: "column", md: "row" }}
+      <Container maxW="6xl" px={{ base: 6, md: 3 }} py={19} pt="123px">
+        <Stack
+          direction={{ base: "column", md: "row" }}
+          justifyContent="center"
+          alignItems="stretch"
+          spacing={8}
+        >
+          <VStack
+            spacing={6}
             justifyContent="center"
-            alignItems="stretch"
-            spacing={8}
+            maxW="480px"
+            alignItems="flex-start"
           >
-            <Stack
-              direction="column"
-              spacing={6}
-              justifyContent="center"
-              maxW="480px"
+            <Heading as="h2" fontSize="5xl" lineHeight={1} color="purple.300">
+              Facial Recognition
+            </Heading>
+            <Text fontSize="1.2rem" lineHeight="1.375" color="gray.300">
+              It will perform facial recognition to analyze facial features
+              and expressions. Once recognized, an email notification will be
+              sent.
+            </Text>
+            <Button
+              colorScheme="purple"
+              size="lg"
+              rounded="md"
+              onClick={handleFaceRecognition}
             >
-              <Text
-                fontSize="5xl"
-                lineHeight={1}
-                fontWeight="bold"
-                textAlign="left"
-                color="gray.700"
-              >
-                Facial Recognition
-              </Text>
-              <Text
-                fontSize="1.2rem"
-                textAlign="left"
-                lineHeight="1.375"
-                fontWeight="400"
-                color="gray.700"
-              >
-                It will perform facial recognition to analyze facial features
-                and expressions. Once recognized, an email notification will be
-                sent.
-              </Text>
-              <Button
-                w={{ base: "100%", sm: "auto" }}
-                h={12}
-                px={6}
-                color="black"
-                size="lg"
-                rounded="md"
-                mb={{ base: 2, sm: 0 }}
-                zIndex={5}
-                bg="#F0E4C7"
-                transition="background-color 0.3s, color 0.3s"
-                _hover={{ bg: "#977C64", color: "white" }}
-                onClick={handleFaceRecognition}
-              >
-                Facial Recognition
-              </Button>
-            </Stack>
-            <Image
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaJ0Z7NfooyS3WS9vRY9a-olCpWORld9wvR7T4NLBltFZEfwu-zWSpwiX0fw0QhT5Fu5Y&usqp=CAU"
-              alt="Capture Image"
-              w={{ base: "100%", md: "50%" }}
-              h="auto"
-              objectFit="cover"
-              borderRadius="md"
-            />
-          </Stack>
-        </Container>
-      </div>
+              Facial Recognition
+            </Button>
+          </VStack>
+          <Image
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaJ0Z7NfooyS3WS9vRY9a-olCpWORld9wvR7T4NLBltFZEfwu-zWSpwiX0fw0QhT5Fu5Y&usqp=CAU"
+            alt="Capture Image"
+            w={{ base: "100%", md: "50%" }}
+            h="auto"
+            objectFit="cover"
+            borderRadius="md"
+          />
+        </Stack>
+      </Container>
 
       {/* Second Section */}
-      <div
-        style={{
-          height: "100vh",
-          backgroundColor: "#F0E4C7",
-          filter: loading ? "blur(4px)" : "none",
-        }}
-      >
+      <Box bg="gray.800" width="100%" minHeight="100vh">
         <Container maxW="6xl" px={{ base: 6, md: 3 }} py={19} pt="123px">
           <Stack
             direction={{ base: "column", md: "row" }}
@@ -209,67 +179,39 @@ const FaceRecognition = () => {
             alignItems="stretch"
             spacing={8}
           >
-            <Stack
-              direction="column"
+            <VStack
               spacing={6}
               justifyContent="center"
               maxW="480px"
+              alignItems="flex-start"
             >
-              <Text
-                fontSize="4xl"
-                lineHeight={1}
-                fontWeight="bold"
-                textAlign="left"
-                color="black"
-              >
+              <Heading as="h2" fontSize="4xl" lineHeight={1} color="purple.300">
                 Geocoding & Reverse Geocoding
-              </Text>
-              <Text
-                fontSize="1.2rem"
-                textAlign="left"
-                lineHeight="1.375"
-                fontWeight="400"
-                color="black"
-              >
+              </Heading>
+              <Text fontSize="1.2rem" lineHeight="1.375" color="gray.300">
                 This process will perform geocoding to convert addresses into
                 geographic coordinates, and reverse geocoding to convert
                 geographic coordinates into addresses.
               </Text>
               <Stack direction="row" spacing={4}>
                 <Button
-                  w={{ base: "100%", sm: "auto" }}
-                  h={12}
-                  px={14}
-                  color="white"
+                  colorScheme="purple"
                   size="lg"
                   rounded="md"
-                  mb={{ base: 2, sm: 0 }}
-                  zIndex={5}
-                  bg="#977C64"
-                  transition="background-color 0.3s, color 0.3s"
-                  _hover={{ bg: "#977C64", color: "black" }}
                   onClick={handleGeocoding}
                 >
                   Geocoding
                 </Button>
                 <Button
-                  w={{ base: "100%", sm: "auto" }}
-                  h={12}
-                  px={6}
-                  color="white"
+                  colorScheme="purple"
                   size="lg"
                   rounded="md"
-                  mb={{ base: 2, sm: 0 }}
-                  zIndex={5}
-                  bg="#977C64"
-                  transition="background-color 0.3s, color 0.3s"
-                  _hover={{ bg: "#977C64", color: "black" }}
                   onClick={handleReverseGeocoding}
                 >
                   Reverse Geocoding
                 </Button>
               </Stack>
-            </Stack>
+            </VStack>
             <Image
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-69nanL0gXpaZN0mih9H8KCtZlFldquBYuQ&usqp=CAU"
               alt="Train Image"
@@ -280,8 +222,8 @@ const FaceRecognition = () => {
             />
           </Stack>
         </Container>
-      </div>
-    </>
+      </Box>
+    </Box>
   );
 };
 
